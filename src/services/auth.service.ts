@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../services/users.service';
+import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
 
 type AuthInput = { username: string; password: string };
