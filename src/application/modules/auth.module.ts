@@ -3,6 +3,9 @@ import { AuthService } from '../../services/auth.service';
 import { AuthController } from '../../application/controllers/auth.controller';
 import { UsersModule } from './users.module';
 import { JwtModule } from '@nestjs/jwt'
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from '../strategies/local.strategy';
+import { JwtStrategy } from '../strategies/jwt.strategiy';
 // import { JWT_SECRET } from 'src'
 
 // FIXME: This file is for development purposes only. Do not use this in p
@@ -12,7 +15,7 @@ export const JWT_SECRET =
   "if-at-first-you-don't-succeed-dust-yourself-off-and-try-again";
 
 @Module({
-  providers: [AuthService],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
   imports: [
     UsersModule,
@@ -21,6 +24,7 @@ export const JWT_SECRET =
       secret: JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
+    PassportModule,
   ],
 })
 export class AuthModule {}
