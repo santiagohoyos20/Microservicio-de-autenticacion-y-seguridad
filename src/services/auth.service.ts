@@ -13,16 +13,6 @@ export class AuthService {
         private jwtService: JwtService,
     ){}
 
-    async authenticate(input: AuthInput): Promise<AuthResult> {
-        const user = await this.validateUser(input);
-
-        if (!user){
-            throw new UnauthorizedException();
-        }
-
-        return this.signIn(user)
-    }
-
     async validateUser(input: AuthInput): Promise<SignInData | null> {
         const user = await this.usersService.findUserByName(input.username);
 
