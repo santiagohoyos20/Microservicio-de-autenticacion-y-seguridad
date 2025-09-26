@@ -5,19 +5,19 @@ import { User } from 'src/domain/entities/types';
 const users: User[] = [
   {
     userId: 1,
-    username: 'Alice',
+    email: 'alice@example.com',
     password: 'topsecret', // FIXME: Use a hash instead
   },
   {
     userId: 2,
-    username: 'Bob',
+    email: 'bob@example.com',
     password: '123abc',
   },
 ]
 
 @Injectable()
 export class UsersService {
-    async findUserByName(username: string): Promise<User | undefined>{
-        return users.find(user => user.username === username);
+    async findUserByEmail(email: string): Promise<User | undefined>{
+        return users.find(user => user.email === email);
     }
 }
