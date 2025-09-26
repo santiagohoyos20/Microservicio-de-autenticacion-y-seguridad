@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../infrastructure/prisma.service';
 
 type AuthInput = { email: string; password: string };
 type SignInData = { userId: number; email: string };
@@ -11,6 +12,7 @@ export class AuthService {
     constructor(
         private usersService: UsersService,
         private jwtService: JwtService,
+        private prisma: PrismaService,
     ){}
 
     async validateUser(input: AuthInput): Promise<SignInData | null> {
@@ -37,6 +39,10 @@ export class AuthService {
             email: user.email,
             userId: user.userId
         }
+    }
+
+    async prueba(){
+        console.log("prueba: ", await this.prisma.users_auth.findMany());
     }
 
 }

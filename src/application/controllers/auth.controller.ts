@@ -5,18 +5,24 @@ import { PassportJwtAuthGuard } from '../guards/passport-jwt.guard';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService) { }
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
     @UseGuards(PassportLocalGuard)
-    login(@Request() request){
+    login(@Request() request) {
         return this.authService.signIn(request.user)
     }
 
     @UseGuards(PassportJwtAuthGuard)
     @Get('me')
-    getUserInfo(@Request() request: any){
+    getUserInfo(@Request() request: any) {
         return request.user;
     }
+
+    // @HttpCode(HttpStatus.CREATED) // 201 → recurso creado
+    // @Post('register')
+    // async register(@Body() createUserDto: CreateUserDto) {
+    //     return this.authService.register(createUserDto);
+    // }
 }
