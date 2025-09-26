@@ -8,8 +8,8 @@ datasource db {
 }
 
 model users_auth {
-  id_usuario    String       @id @db.Uuid
-  email         String
+  id_usuario    String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String       @unique
   hash_password String
   estado        String
   user_roles    user_roles[]

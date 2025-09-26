@@ -4,8 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../infrastructure/prisma.service';
 
 type AuthInput = { email: string; password: string };
-type SignInData = { userId: number; email: string };
-type AuthResult = { accessToken: string; userId: number; email: string };
+type SignInData = { userId: string; email: string };
+type AuthResult = { accessToken: string; userId: string; email: string };
 
 @Injectable()
 export class AuthService {
@@ -17,10 +17,9 @@ export class AuthService {
 
     async validateUser(input: AuthInput): Promise<SignInData | null> {
         const user = await this.usersService.findUserByEmail(input.email);
-
-        if (user && user.password === input.password){
+        if (user && user.hash_password === input.password){
             return {
-                userId: user.userId,
+                userId: user.id_usuario,
                 email: user.email
             };
         }
@@ -32,12 +31,21 @@ export class AuthService {
             sub: user.userId,
             email: user.email,
         }
-
+        console.log(user);
         const accessToken = await this.jwtService.signAsync(tokenPayload);
         return {
             accessToken,
             email: user.email,
             userId: user.userId
         }
+    }
+
+    async signUp(input: AuthInput): Promise<any>{
+        const existingUser = await this.usersService.findUserByEmail(input.email);
+        if (existingUser) {
+            throw new Error('User already exists');
+        }
+        const newUser = await this.usersService.createUser(input);
+        return newUser;
     }
 }

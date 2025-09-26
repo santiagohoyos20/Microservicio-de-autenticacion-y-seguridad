@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, NotImplementedException, P
 import { AuthService } from 'src/services/auth.service';
 import { PassportLocalGuard } from '../guards/passport-local.guard';
 import { PassportJwtAuthGuard } from '../guards/passport-jwt.guard';
+import { CreateUserDto } from 'src/domain/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -20,9 +21,9 @@ export class AuthController {
         return request.user;
     }
 
-    // @HttpCode(HttpStatus.CREATED) // 201 → recurso creado
-    // @Post('register')
-    // async register(@Body() createUserDto: CreateUserDto) {
-    //     return this.authService.register(createUserDto);
-    // }
+    @HttpCode(HttpStatus.CREATED) // 201 → recurso creado
+    @Post('signup')
+    async register(@Body() createUserDto: CreateUserDto) {
+        return this.authService.signUp(createUserDto);
+    }
 }
