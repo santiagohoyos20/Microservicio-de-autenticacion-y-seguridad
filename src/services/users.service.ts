@@ -3,20 +3,6 @@ import { CreateUserDto } from 'src/domain/dto/create-user.dto';
 import { User } from 'src/domain/entities/types';
 import { PrismaService } from 'src/infrastructure/prisma.service';
 
-// FIXME: This is a mockup, replace with a real database
-// const users: User[] = [
-//   {
-//     userId: 1,
-//     email: 'alice@example.com',
-//     password: 'topsecret', // FIXME: Use a hash instead
-//   },
-//   {
-//     userId: 2,
-//     email: 'bob@example.com',
-//     password: '123abc',
-//   },
-// ]
-
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) { }
