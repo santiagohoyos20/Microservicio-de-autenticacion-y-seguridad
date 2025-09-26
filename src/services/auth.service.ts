@@ -40,9 +40,4 @@ export class AuthService {
             userId: user.userId
         }
     }
-
-    async prueba(){
-        console.log("prueba: ", await this.prisma.users_auth.findMany());
-    }
-
 }

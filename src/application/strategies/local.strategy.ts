@@ -14,7 +14,7 @@ export class LocalStrategy extends PassportStrategy(Strategy){
             email,
             password
         });
-        this.authService.prueba();
+        
         if (!user){
             throw new UnauthorizedException();
         }
