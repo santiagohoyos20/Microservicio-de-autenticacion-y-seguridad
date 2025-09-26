@@ -51,6 +51,8 @@ export class AuthService {
         const saltRounds = 10;
         input.password = await bcrypt.hash(input.password, saltRounds);
         const newUser = await this.usersService.createUser(input);
-        return newUser;
+        return {
+            email: newUser.email,
+        };
     }
 }
