@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../infrastructure/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 type AuthInput = { email: string; password: string };
 type SignInData = { userId: string; email: string };
@@ -17,7 +18,8 @@ export class AuthService {
 
     async validateUser(input: AuthInput): Promise<SignInData | null> {
         const user = await this.usersService.findUserByEmail(input.email);
-        if (user && user.hash_password === input.password){
+        const isMatch = await bcrypt.compare(input.password, user.hash_password);
+        if (user && isMatch){
             return {
                 userId: user.id_usuario,
                 email: user.email
@@ -45,6 +47,9 @@ export class AuthService {
         if (existingUser) {
             throw new Error('User already exists');
         }
+
+        const saltRounds = 10;
+        input.password = await bcrypt.hash(input.password, saltRounds);
         const newUser = await this.usersService.createUser(input);
         return newUser;
     }
