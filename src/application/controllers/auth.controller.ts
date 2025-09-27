@@ -12,6 +12,7 @@ export class AuthController {
     @Post('login')
     @UseGuards(PassportLocalGuard)
     login(@Request() request) {
+        console.log(request.user);
         return this.authService.signIn(request.user)
     }
 

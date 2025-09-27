@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/domain/dto/create-user.dto';
 
 type AuthInput = { email: string; password: string };
-type SignInData = { userId: string; email: string };
+type SignInData = { userId: string; email: string; roles: number[] };
 type AuthResult = { accessToken: string; userId: string; email: string };
 
 @Injectable()
@@ -23,7 +23,8 @@ export class AuthService {
         if (user && isMatch){
             return {
                 userId: user.id_usuario,
-                email: user.email
+                email: user.email,
+                roles: user.roleIds
             };
         }
         return null;
@@ -33,8 +34,8 @@ export class AuthService {
         const tokenPayload = {
             sub: user.userId,
             email: user.email,
+            roles: user.roles
         }
-        console.log(user);
         const accessToken = await this.jwtService.signAsync(tokenPayload);
         return {
             accessToken,

@@ -6,11 +6,30 @@ import { PrismaService } from 'src/infrastructure/prisma.service';
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) { }
-  
+
   async findUserByEmail(email: string): Promise<any> {
-    return this.prisma.users_auth.findUnique({
+    const user = await this.prisma.users_auth.findUnique({
       where: { email },
+      select: {
+        id_usuario: true,
+        email: true,
+        hash_password: true,
+        user_roles: {
+          select: {
+            id_rol: true,
+          },
+        },
+      },
     });
+
+    const userWithRoles = {
+      ...user,
+      roleIds: user?.user_roles.map(ur => ur.id_rol),
+    };
+
+    delete userWithRoles.user_roles;
+    
+    return userWithRoles;
   }
 
   async createUser(user: CreateUserDto): Promise<any> {
@@ -29,7 +48,7 @@ export class UsersService {
         id_rol: user.role,
       },
     });
-    
+
     return {
       email: user.email,
       estado: 'activo',
