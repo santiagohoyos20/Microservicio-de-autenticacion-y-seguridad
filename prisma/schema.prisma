@@ -16,14 +16,14 @@ model users_auth {
 }
 
 model roles {
-  id_rol     String       @id @db.Uuid
-  nombre_rol String
+  id_rol     Int          @id @default(autoincrement()) @db.Integer
+  nombre_rol String       @unique
   user_roles user_roles[]
 }
 
 model user_roles {
   id_usuario String     @db.Uuid
-  id_rol     String     @db.Uuid
+  id_rol     Int        @db.Integer
   role       roles      @relation(fields: [id_rol], references: [id_rol])
   user       users_auth @relation(fields: [id_usuario], references: [id_usuario])
 

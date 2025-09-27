@@ -15,17 +15,26 @@ export class UsersService {
 
   async createUser(user: CreateUserDto): Promise<any> {
 
-    await this.prisma.users_auth.create({
+    const newUser = await this.prisma.users_auth.create({
       data: {
         email: user.email,
         hash_password: user.password,
         estado: 'activo',
       },
     });
+
+    await this.prisma.user_roles.create({
+      data: {
+        id_usuario: newUser.id_usuario,
+        id_rol: user.role,
+      },
+    });
+    
     return {
       email: user.email,
-      hash_password: user.password,
       estado: 'activo',
+      userID: newUser.id_usuario,
+      role: user.role,
     };
   }
 }

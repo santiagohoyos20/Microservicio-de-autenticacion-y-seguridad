@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../infrastructure/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/domain/dto/create-user.dto';
 
 type AuthInput = { email: string; password: string };
 type SignInData = { userId: string; email: string };
@@ -42,7 +43,7 @@ export class AuthService {
         }
     }
 
-    async signUp(input: AuthInput): Promise<any>{
+    async signUp(input: CreateUserDto): Promise<any>{
         const existingUser = await this.usersService.findUserByEmail(input.email);
         if (existingUser) {
             throw new Error('User already exists');
