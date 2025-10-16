@@ -21,15 +21,14 @@ export class UsersService {
         },
       },
     });
+    if (!user) return null;
 
-    const userWithRoles = {
-      ...user,
-      roleIds: user?.user_roles.map(ur => ur.id_rol),
+    return {
+      id_usuario: user.id_usuario,
+      email: user.email,
+      hash_password: user.hash_password,
+      roleIds: user.user_roles.map(r => r.id_rol),
     };
-
-    delete userWithRoles.user_roles;
-    
-    return userWithRoles;
   }
 
   async createUser(user: CreateUserDto): Promise<any> {
