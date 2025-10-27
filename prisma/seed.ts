@@ -4,9 +4,9 @@ const prisma = new PrismaClient();
 
 async function main() {
   const roles = [
-    { nombre_rol: 'admin' },
-    { nombre_rol: 'driver' },
-    { nombre_rol: 'user' },
+    { id_rol: 1, nombre_rol: 'admin' },
+    { id_rol: 2, nombre_rol: 'driver' },
+    { id_rol: 3, nombre_rol: 'user' },
   ];
 
   for (const role of roles) {
@@ -16,14 +16,13 @@ async function main() {
       create: role,
     });
   }
+
+  console.log('Roles insertados correctamente');
 }
 
 main()
-  .then(() => {
-    console.log('Roles insertados correctamente');
-  })
   .catch((e) => {
-    console.error(e);
+    console.error('Error insertando roles:', e);
     process.exit(1);
   })
   .finally(async () => {

@@ -7,25 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model roles {
+  id_rol     Int          @id @db.Integer
+  nombre_rol String       @unique
+  usuarios   users_auth[]
+}
+
 model users_auth {
-  id_usuario    String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email         String       @unique
+  id_usuario    String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String  @unique
   hash_password String
   estado        String
-  user_roles    user_roles[]
+  id_rol        Int
+  rol           roles   @relation(fields: [id_rol], references: [id_rol])
 }
 
-model roles {
-  id_rol     Int          @id @default(autoincrement()) @db.Integer
-  nombre_rol String       @unique
-  user_roles user_roles[]
-}
-
-model user_roles {
-  id_usuario String     @db.Uuid
-  id_rol     Int        @db.Integer
-  role       roles      @relation(fields: [id_rol], references: [id_rol])
-  user       users_auth @relation(fields: [id_usuario], references: [id_usuario])
-
-  @@id([id_usuario, id_rol])
-}

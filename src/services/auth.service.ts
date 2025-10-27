@@ -15,22 +15,26 @@ export class AuthService {
         private usersService: UsersService,
         private jwtService: JwtService,
         private prisma: PrismaService,
-    ){}
+    ) { }
 
     async validateUser(input: AuthInput): Promise<SignInData | null> {
         const user = await this.usersService.findUserByEmail(input.email);
+        if (!user) return null;
+
         const isMatch = await bcrypt.compare(input.password, user.hash_password);
-        if (user && isMatch){
+        if (user && isMatch) {
             return {
                 userId: user.id_usuario,
                 email: user.email,
-                roles: user.roleIds
+                roles: user.roleIds,
             };
         }
+
         return null;
     }
 
-    async signIn(user: SignInData): Promise<AuthResult>{
+
+    async signIn(user: SignInData): Promise<AuthResult> {
         const tokenPayload = {
             sub: user.userId,
             email: user.email,
@@ -44,7 +48,7 @@ export class AuthService {
         }
     }
 
-    async signUp(input: CreateUserDto): Promise<any>{
+    async signUp(input: CreateUserDto): Promise<any> {
         const existingUser = await this.usersService.findUserByEmail(input.email);
         if (existingUser) {
             throw new Error('User already exists');
