@@ -14,45 +14,40 @@ export class UsersService {
         id_usuario: true,
         email: true,
         hash_password: true,
-        user_roles: {
-          select: {
-            id_rol: true,
-          },
-        },
+        estado: true,
+        id_rol: true,
       },
     });
+
     if (!user) return null;
 
     return {
       id_usuario: user.id_usuario,
       email: user.email,
       hash_password: user.hash_password,
-      roleIds: user.user_roles.map(r => r.id_rol),
+      estado: user.estado,
+      id_rol: user.id_rol,
     };
   }
 
   async createUser(user: CreateUserDto): Promise<any> {
+    const roleId = user.rol ?? 3; // Asigna 3 si no se proporciona rol
 
     const newUser = await this.prisma.users_auth.create({
       data: {
         email: user.email,
         hash_password: user.password,
         estado: 'activo',
+        rol: { connect: { id_rol: roleId } },
+      },
+      select: {
+        id_usuario: true,
+        email: true,
+        estado: true,
+        id_rol: true,
       },
     });
 
-    await this.prisma.user_roles.create({
-      data: {
-        id_usuario: newUser.id_usuario,
-        id_rol: user.role,
-      },
-    });
-
-    return {
-      email: user.email,
-      estado: 'activo',
-      userID: newUser.id_usuario,
-      role: user.role,
-    };
+    return newUser;
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../infrastructure/prisma.service';
@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/domain/dto/create-user.dto';
 
 type AuthInput = { email: string; password: string };
-type SignInData = { userId: string; email: string; roles: number[] };
+type SignInData = { userId: string; email: string; id_rol: number };
 type AuthResult = { accessToken: string; userId: string; email: string };
 
 @Injectable()
@@ -26,7 +26,7 @@ export class AuthService {
             return {
                 userId: user.id_usuario,
                 email: user.email,
-                roles: user.roleIds,
+                id_rol: user.id_rol,
             };
         }
 
@@ -38,27 +38,25 @@ export class AuthService {
         const tokenPayload = {
             sub: user.userId,
             email: user.email,
-            roles: user.roles
+            id_rol: user.id_rol,
         }
         const accessToken = await this.jwtService.signAsync(tokenPayload);
         return {
             accessToken,
+            userId: user.userId,
             email: user.email,
-            userId: user.userId
         }
     }
 
-    async signUp(input: CreateUserDto): Promise<any> {
-        const existingUser = await this.usersService.findUserByEmail(input.email);
+    async signUp(inputUser: CreateUserDto): Promise<any> {
+        const existingUser = await this.usersService.findUserByEmail(inputUser.email);
         if (existingUser) {
-            throw new Error('User already exists');
+            throw new ConflictException('User already exists');
         }
 
         const saltRounds = 10;
-        input.password = await bcrypt.hash(input.password, saltRounds);
-        const newUser = await this.usersService.createUser(input);
-        return {
-            email: newUser.email,
-        };
+        inputUser.password = await bcrypt.hash(inputUser.password, saltRounds);
+        const newUser = await this.usersService.createUser(inputUser);
+        return newUser;
     }
 }
