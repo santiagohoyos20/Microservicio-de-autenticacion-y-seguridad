@@ -31,7 +31,7 @@ export class UsersService {
   }
 
   async createUser(user: CreateUserDto): Promise<any> {
-    const roleId = user.rol ?? 3; // Asigna 3 si no se proporciona rol
+    const roleId = user.id_rol ?? 3; // Asigna 3 si no se proporciona rol
 
     const newUser = await this.prisma.users_auth.create({
       data: {

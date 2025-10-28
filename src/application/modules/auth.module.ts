@@ -7,11 +7,13 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from '../strategies/local.strategy';
 import { JwtStrategy } from '../strategies/jwt.strategiy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GrpcModule } from './grpc.module';
 
 @Module({
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
   imports: [
+    GrpcModule,
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({
