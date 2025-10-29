@@ -25,7 +25,7 @@ import {
 @ApiTags('autenticación') // Agrupa estos endpoints bajo "autenticación" en Swagger
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   /**
    * 🔐 Inicio de sesión con credenciales locales (usuario y contraseña)
@@ -105,23 +105,38 @@ export class AuthController {
     description:
       'Crea un nuevo usuario en el sistema y devuelve su información básica.',
   })
-  @ApiBody({ type: CreateUserDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Usuario creado correctamente.',
-    schema: {
-      example: {
-        id: 12,
-        email: 'nuevo@correo.com',
-        createdAt: '2025-10-16T18:00:00Z',
+  @ApiBody({
+    type: CreateUserDto,
+    examples: {
+      ejemplo1: {
+        summary: 'Datos de registro válidos',
+        value: {
+          "email": "usuario20@example.com",
+          "password": "p2",
+          "id_rol": 2,
+          "name": "Benito",
+          "lastname": "Martinez",
+          "phone_number": "3158695326"
+        }
       },
     },
   })
-  @ApiResponse({
-    status: 400,
-    description: 'Datos inválidos o usuario ya existente.',
-  })
-  async register(@Body() createUserDto: CreateUserDto) {
-    return this.authService.signUp(createUserDto);
-  }
+@ApiResponse({
+  status: 201,
+  description: 'Usuario creado correctamente.',
+  schema: {
+    example: {
+      id: 12,
+      email: 'nuevo@correo.com',
+      createdAt: '2025-10-16T18:00:00Z',
+    },
+  },
+})
+@ApiResponse({
+  status: 400,
+  description: 'Datos inválidos o usuario ya existente.',
+})
+async register(@Body() createUserDto: CreateUserDto) {
+  return this.authService.signUp(createUserDto);
+}
 }
