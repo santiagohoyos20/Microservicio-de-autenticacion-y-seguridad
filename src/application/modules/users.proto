@@ -11,7 +11,7 @@ message CreateUserRequest {
   string email = 2;
   string name = 3;
   string lastname = 4;
-  string phone_number = 5;
+  string phoneNumber = 5;
 }
 
 message UserResponse {
@@ -19,6 +19,6 @@ message UserResponse {
   string email = 2;
   string name = 3;
   string lastname = 4;
-  string phone_number = 5;
+  string phoneNumber = 5;
   string message = 6;
 }

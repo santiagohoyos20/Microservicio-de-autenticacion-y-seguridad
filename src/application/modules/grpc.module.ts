@@ -15,8 +15,18 @@ import { join } from 'path';
           url: 'localhost:50051', // dirección del microservicio users
         },
       },
+      // Cliente para DRIVERS
+      {
+        name: 'DRIVERS_PACKAGE',
+        transport: Transport.GRPC,
+        options: {
+          package: 'drivers', // debe coincidir con el "package" del .proto
+          protoPath: join(process.cwd(), 'src/application/modules/drivers.proto'),
+          url: 'localhost:50052', // dirección del microservicio drivers
+        },
+      },
     ]),
   ],
   exports: [ClientsModule], // importante: exportar para que otros módulos lo usen
 })
-export class GrpcModule {}
+export class GrpcModule { }

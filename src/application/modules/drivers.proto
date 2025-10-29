@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package drivers;
+
+// Servicio principal
+service DriversService {
+  rpc CreateDriver (CreateDriverRequest) returns (DriverResponse);
+}
+
+// Mensaje de solicitud para crear un conductor
+message CreateDriverRequest {
+  string uuid = 1;
+  string email = 2;
+  string name = 3;
+  string lastname = 4;
+  string phoneNumber = 5;
+  string rol = 6;
+}
+
+// Mensaje de respuesta del servicio
+message DriverResponse {
+  string uuid = 1;
+  string email = 2;
+  string name = 3;
+  string lastname = 4;
+  string phoneNumber = 5;
+  string rol = 6;
+  string message = 7;
+}

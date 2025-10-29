@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, InternalServerErrorException, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../infrastructure/prisma.service';
@@ -11,18 +11,23 @@ type SignInData = { userId: string; email: string; id_rol: number };
 type AuthResult = { accessToken: string; userId: string; email: string };
 import { IUserService } from '../domain/interfaces/user-grpc.interfaces';
 import { firstValueFrom } from 'rxjs';
+import { IDriverService } from 'src/domain/interfaces/driver-grpc.interfaces';
+import { IsPhoneNumber } from 'class-validator';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
     private userGrpc: IUserService;
+    private driverGrpc: IDriverService;
     constructor(
         private usersService: UsersService,
         private jwtService: JwtService,
         private prisma: PrismaService,
-        @Inject('USERS_PACKAGE') private readonly client: ClientGrpc,
+        @Inject('USERS_PACKAGE') private readonly userClient: ClientGrpc,
+        @Inject('DRIVERS_PACKAGE') private driverClient: ClientGrpc,
     ) { }
     onModuleInit() {
-        this.userGrpc = this.client.getService<IUserService>('UsersService');
+        this.userGrpc = this.userClient.getService<IUserService>('UsersService');
+        this.driverGrpc = this.driverClient.getService<IDriverService>('DriversService');
     }
 
     async validateUser(input: AuthInput): Promise<SignInData | null> {
@@ -65,14 +70,34 @@ export class AuthService implements OnModuleInit {
         const saltRounds = 10;
         inputUser.password = await bcrypt.hash(inputUser.password, saltRounds);
         const newUser = await this.usersService.createUser(inputUser);
-        console.log('telefono:', inputUser.phone_number);
+        // console.log('telefono:', inputUser.phone_number);
+
+        if (inputUser.id_rol == 2) {
+            try {
+                console.log(inputUser.phoneNumber);
+                const response = await firstValueFrom(
+                    this.driverGrpc.createDriver({
+                        uuid: newUser.id_usuario,
+                        email: newUser.email,
+                        name: inputUser.name,
+                        lastname: inputUser.lastname,
+                        phoneNumber: inputUser.phoneNumber,
+                        rol: inputUser.id_rol,
+                    }),
+                );
+                return response;
+            } catch (error) {
+                console.error('Error gRPC createDriver:', error);
+                throw new InternalServerErrorException('Error interno al registrar driver');
+            }
+        }
         const response = await firstValueFrom(
             this.userGrpc.createUser({
                 uuid: newUser.id_usuario,
                 email: newUser.email,
                 name: inputUser.name,
                 lastname: inputUser.lastname,
-                phone_number: 'HOLA',
+                phoneNumber: inputUser.phoneNumber,
             }),
         );
         return response;

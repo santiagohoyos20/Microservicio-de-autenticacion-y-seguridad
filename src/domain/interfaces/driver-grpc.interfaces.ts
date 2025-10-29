@@ -1,22 +1,24 @@
 import { Observable } from 'rxjs';
 
-export interface IUserService {
-  createUser(data: CreateUserRequest): Observable<UserResponse>;
+export interface IDriverService {
+  createDriver(data: CreateDriverRequest): Observable<DriverResponse>;
 }
 
-export interface CreateUserRequest {
+export interface CreateDriverRequest {
   uuid: string;
   email: string;
   name: string;
   lastname: string;
   phoneNumber: string;
+  rol: number;
 }
 
-export interface UserResponse {
+export interface DriverResponse {
   uuid: string;
   email: string;
   name: string;
   lastname: string;
   phoneNumber: string;
+  rol: number;
   message: string;
 }
