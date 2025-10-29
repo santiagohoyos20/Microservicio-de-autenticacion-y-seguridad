@@ -20,24 +20,23 @@ services:
       retries: 5
 
   app:
-    image: node:20
+    build: .
     container_name: auth_app
     restart: unless-stopped
-    working_dir: /usr/src/app
-    volumes:
-      - ./:/usr/src/app   # carpeta de tu proyecto NestJS
-      - /usr/src/app/node_modules
-    ports:
-      - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://user:pass@db:5432/auth"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     command: >
       sh -c "
-        npm install &&
-        npx prisma generate &&
-        npx prisma migrate deploy &&
-        npx prisma db seed &&
+        npx prisma migrate deploy || true &&
+        npx prisma db seed || true &&
         npm run start:dev
       "
 
