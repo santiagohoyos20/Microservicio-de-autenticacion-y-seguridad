@@ -17,7 +17,7 @@ const config = new DocumentBuilder()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document, {
+  SwaggerModule.setup('auth/api/docs', app, document, {
     // opciones extra si quieres (ej: custom siteTitle)
     swaggerOptions: { persistAuthorization: true },
     customSiteTitle: 'Docs - Auth Service',
