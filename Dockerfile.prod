@@ -1,0 +1,36 @@
+# Etapa 1: build
+FROM node:20-alpine AS builder
+
+# |Establece el directorio de trabajo
+WORKDIR /usr/src/app
+
+# Copia archivos de dependencias
+COPY package*.json ./
+
+# Instala todas las dependencias (producción + desarrollo)
+RUN npm ci && npm cache clean --force
+
+# Copia el código fuente y archivos de Prisma
+COPY prisma ./prisma
+COPY src ./src
+COPY tsconfig*.json ./
+
+# Genera el cliente de Prisma
+RUN npx prisma generate
+
+# Compila TypeScript a JavaScript
+RUN npm run build
+
+# Etapa 2: runtime
+FROM node:20
+
+WORKDIR /usr/src/app
+
+# Copia solo los archivos necesarios desde el builder
+COPY --from=builder /usr/src/app ./
+
+# Expone el puerto de la app
+EXPOSE 3000
+
+# Comando por defecto
+CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && npm run start:dev"]
