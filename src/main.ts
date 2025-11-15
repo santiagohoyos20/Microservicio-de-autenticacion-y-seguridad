@@ -23,7 +23,6 @@ const config = new DocumentBuilder()
     customSiteTitle: 'Docs - Auth Service',
   });
 
-  app.enableCors();
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
